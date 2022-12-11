@@ -6066,6 +6066,55 @@ spawn(function()
 	end
 end)
 
+
+
+spawn(function()
+	local gg = getrawmetatable(game)
+	local old = gg.__namecall
+	setreadonly(gg,false)
+	gg.__namecall = newcclosure(function(...)
+		local method = getnamecallmethod()
+		local args = {...}
+		if tostring(method) == "FireServer" then
+			if tostring(args[1]) == "RemoteEvent" then
+				if tostring(args[2]) ~= "true" and tostring(args[2]) ~= "false" then
+					if UseSkillMasteryDevilFruit then
+						args[2] = PositionSkillMasteryDevilFruit
+						return old(unpack(args))
+					elseif AimSkillNearest then
+						args[2] = AimBotSkillPosition
+						return old(unpack(args))
+					end
+				end
+			end
+		end
+		return old(...)
+	end)
+end)
+
+
+
+spawn(function()
+	local gg = getrawmetatable(game)
+	local old = gg.__namecall
+	setreadonly(gg,false)
+	gg.__namecall = newcclosure(function(...)
+		local method = getnamecallmethod()
+		local args = {...}
+		if tostring(method) == "FireServer" then
+			if tostring(args[1]) == "RemoteEvent" then
+				if tostring(args[2]) ~= "true" and tostring(args[2]) ~= "false" then
+					if _G.Aimbot_Skill_Fov then
+						args[2] = _G.Aim_Players.Character.HumanoidRootPart.Position
+						return old(unpack(args))
+					end
+				end
+			end
+		end
+		return old(...)
+	end)
+end)
+
 spawn(function()
 	local gg = getrawmetatable(game)
 	local old = gg.__namecall
@@ -6111,7 +6160,7 @@ Aimbot:AddSlider({
 	Name = "Select Size Fov",
 	Flag = "Select_Size_Fov",
 	Value = _G.Select_Size_Fov,
-	Min = 50,
+	Min = 1,
 	Max = 1000,
 	Textbox = true,
 	Format = function(value)
@@ -6137,11 +6186,14 @@ Aimbot:AddToggle{
 		_G.Aimbot_Skill_Fov = value
 	end
 }
-
-pcall(function()
-    if game.Players.LocalPlayer.Character["Movement + Swim"] then
-        game.Players.LocalPlayer.Character["Movement + Swim"].Disabled = true
-    end
+spawn(function()
+	while wait() do
+		pcall(function()
+			if game.Players.LocalPlayer.Character["Movement + Swim"] then
+				game.Players.LocalPlayer.Character["Movement + Swim"].Disabled = true
+			end
+		end)
+	end
 end)
 
 return library, library_flags, library.subs
