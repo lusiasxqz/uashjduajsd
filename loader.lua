@@ -6035,14 +6035,94 @@ Misc:AddSlider({
 	end
 })
 
+Misc:AddToggle{
+	Name = "ESP Player",
+	Flag = "ESP_Player",
+	Value = _G.ESP_Player,
+	Callback  = function(value)
+	_G.ESP_Player = value
+		while _G.ESP_Player do wait()
+			UpdateEspPlayer()
+		end
+	end
+}
+
+
 spawn(function()
 	while wait() do
 		pcall(function()
-
 			game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = _G.Walk_Speed
 		end)
 	end
 end)
+
+function isnil(thing)
+    return (thing == nil)
+end
+local function round(n)
+    return math.floor(tonumber(n) + 0.5)
+end
+Number = math.random(1, 1000000)
+
+function UpdateEspPlayer()
+    if _G.ESP_Player then
+        for i,v in pairs(game:GetService("Players"):GetPlayers()) do
+            if not isnil(v.Character) then
+                if not v.Character.Head:FindFirstChild('NameEsp'..v.Name) then
+                    local BillboardGui = Instance.new("BillboardGui")
+                    local ESP = Instance.new("TextLabel")
+                    local HealthESP = Instance.new("TextLabel")
+                    BillboardGui.Parent = v.Character.Head
+                    BillboardGui.Name = 'NameEsp'..v.Name
+                    BillboardGui.ExtentsOffset = Vector3.new(0, 1, 0)
+                    BillboardGui.Size = UDim2.new(1,100,1,30)
+                    BillboardGui.Adornee = v.Character.Head
+                    BillboardGui.AlwaysOnTop = true
+                    ESP.Name = "ESP"
+                    ESP.Parent = BillboardGui
+                    ESP.TextTransparency = 0
+                    ESP.BackgroundTransparency = 1
+                    ESP.Size = UDim2.new(0, 100, 0, 30)
+                    ESP.Position = UDim2.new(0,25,0,0)
+                    ESP.Font = Enum.Font.Gotham
+                    ESP.Text = (v.Name ..' '.."[ "..round((game:GetService('Players').LocalPlayer.Character.Head.Position - v.Character.Head.Position).Magnitude/3) ..' M'.." ]")
+                    if v.Team == game:GetService("Players").LocalPlayer.Team then
+                        ESP.TextColor3 = Color3.new(0, 255, 255)
+                    else
+                        ESP.TextColor3 = Color3.new(0,255,255)
+                    end
+                    ESP.TextSize = 14
+                    ESP.TextStrokeTransparency = 0.500
+                    ESP.TextWrapped = true
+                    HealthESP.Name = "HealthESP"
+                    HealthESP.Parent = ESP
+                    HealthESP.TextTransparency = 0
+                    HealthESP.BackgroundTransparency = 1
+                    HealthESP.Position = ESP.Position + UDim2.new(0, -25, 0, 15)
+                    HealthESP.Size = UDim2.new(0, 100, 0, 30)
+                    HealthESP.Font = Enum.Font.Gotham
+                    HealthESP.TextColor3 = Color3.fromRGB(0,255,255)
+                    HealthESP.TextSize = 14
+                    HealthESP.TextStrokeTransparency = 0.500
+                    HealthESP.TextWrapped = true
+                    HealthESP.Text = "Health "..math.floor(v.Character.Humanoid.Health).."/"..math.floor(v.Character.Humanoid.MaxHealth)
+                else
+                    v.Character.Head['NameEsp'..v.Name].ESP.Text = (v.Name ..' '..round((game:GetService('Players').LocalPlayer.Character.Head.Position - v.Character.Head.Position).Magnitude/3) ..' M')
+                    v.Character.Head['NameEsp'..v.Name].ESP.HealthESP.Text = "Health "..math.floor(v.Character.Humanoid.Health).."/"..math.floor(v.Character.Humanoid.MaxHealth)
+                    v.Character.Head:FindFirstChild('NameEsp'..v.Name).ESP.TextTransparency = 0
+                    v.Character.Head:FindFirstChild('NameEsp'..v.Name).ESP.HealthESP.TextTransparency = 0
+                end
+            end
+        end
+    else
+        for i,v in pairs(game:GetService("Players"):GetPlayers()) do
+            if v.Character.Head:FindFirstChild('NameEsp'..v.Name) then
+                v.Character.Head:FindFirstChild('NameEsp'..v.Name).ESP.TextTransparency = 1
+                v.Character.Head:FindFirstChild('NameEsp'..v.Name).ESP.HealthESP.TextTransparency = 1
+            end
+        end
+    end     
+end
 
 local lp = game:GetService('Players').LocalPlayer
 local mouse = lp:GetMouse()
