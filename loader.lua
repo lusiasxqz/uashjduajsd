@@ -6048,6 +6048,8 @@ Misc:AddToggle{
 }
 
 
+
+
 spawn(function()
 	while wait() do
 		pcall(function()
@@ -6064,64 +6066,41 @@ local function round(n)
 end
 Number = math.random(1, 1000000)
 
-function UpdateEspPlayer()
-    if _G.ESP_Player then
-        for i,v in pairs(game:GetService("Players"):GetPlayers()) do
-            if not isnil(v.Character) then
-                if not v.Character.Head:FindFirstChild('NameEsp'..v.Name) then
-                    local BillboardGui = Instance.new("BillboardGui")
-                    local ESP = Instance.new("TextLabel")
-                    local HealthESP = Instance.new("TextLabel")
-                    BillboardGui.Parent = v.Character.Head
-                    BillboardGui.Name = 'NameEsp'..v.Name
-                    BillboardGui.ExtentsOffset = Vector3.new(0, 1, 0)
-                    BillboardGui.Size = UDim2.new(1,100,1,30)
-                    BillboardGui.Adornee = v.Character.Head
-                    BillboardGui.AlwaysOnTop = true
-                    ESP.Name = "ESP"
-                    ESP.Parent = BillboardGui
-                    ESP.TextTransparency = 0
-                    ESP.BackgroundTransparency = 1
-                    ESP.Size = UDim2.new(0, 100, 0, 30)
-                    ESP.Position = UDim2.new(0,25,0,0)
-                    ESP.Font = Enum.Font.Gotham
-                    ESP.Text = (v.Name ..' '.."[ "..round((game:GetService('Players').LocalPlayer.Character.Head.Position - v.Character.Head.Position).Magnitude/3) ..' M'.." ]")
-                    if v.Team == game:GetService("Players").LocalPlayer.Team then
-                        ESP.TextColor3 = Color3.new(0, 255, 255)
-                    else
-                        ESP.TextColor3 = Color3.new(0,255,255)
-                    end
-                    ESP.TextSize = 14
-                    ESP.TextStrokeTransparency = 0.500
-                    ESP.TextWrapped = true
-                    HealthESP.Name = "HealthESP"
-                    HealthESP.Parent = ESP
-                    HealthESP.TextTransparency = 0
-                    HealthESP.BackgroundTransparency = 1
-                    HealthESP.Position = ESP.Position + UDim2.new(0, -25, 0, 15)
-                    HealthESP.Size = UDim2.new(0, 100, 0, 30)
-                    HealthESP.Font = Enum.Font.Gotham
-                    HealthESP.TextColor3 = Color3.fromRGB(0,255,255)
-                    HealthESP.TextSize = 14
-                    HealthESP.TextStrokeTransparency = 0.500
-                    HealthESP.TextWrapped = true
-                    HealthESP.Text = "Health "..math.floor(v.Character.Humanoid.Health).."/"..math.floor(v.Character.Humanoid.MaxHealth)
-                else
-                    v.Character.Head['NameEsp'..v.Name].ESP.Text = (v.Name ..' '..round((game:GetService('Players').LocalPlayer.Character.Head.Position - v.Character.Head.Position).Magnitude/3) ..' M')
-                    v.Character.Head['NameEsp'..v.Name].ESP.HealthESP.Text = "Health "..math.floor(v.Character.Humanoid.Health).."/"..math.floor(v.Character.Humanoid.MaxHealth)
-                    v.Character.Head:FindFirstChild('NameEsp'..v.Name).ESP.TextTransparency = 0
-                    v.Character.Head:FindFirstChild('NameEsp'..v.Name).ESP.HealthESP.TextTransparency = 0
-                end
-            end
-        end
-    else
-        for i,v in pairs(game:GetService("Players"):GetPlayers()) do
-            if v.Character.Head:FindFirstChild('NameEsp'..v.Name) then
-                v.Character.Head:FindFirstChild('NameEsp'..v.Name).ESP.TextTransparency = 1
-                v.Character.Head:FindFirstChild('NameEsp'..v.Name).ESP.HealthESP.TextTransparency = 1
-            end
-        end
-    end     
+function UpdatePlayer()
+	for i,v in pairs(game:GetService("Players"):GetChildren()) do
+		pcall(function()
+			if v.Character then
+				if _G.ESP_Player then
+					if v.Character.Head and not v.Character.Head:FindFirstChild("PlayerESP"..Number) then
+						local Bb = Instance.new("BillboardGui", v.Character.Head)
+						Bb.Name = "PlayerESP"..Number
+						Bb.ExtentsOffset = Vector3.new(0, 1, 0)
+						Bb.Size = UDim2.new(1, 200, 1, 30)
+						Bb.Adornee = v.Character.Head
+						Bb.AlwaysOnTop = true
+						local Textlb = Instance.new("TextLabel", Bb)
+						Textlb.Font = "GothamBold"
+						Textlb.FontSize = "Size14"
+						Textlb.Text = v.Name.."\n"..math.round((v.Character.Head.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).Magnitude/3).." m."
+						Textlb.Size = UDim2.new(1,0,1,0)
+						Textlb.BackgroundTransparency = 1
+						Textlb.TextStrokeTransparency = 0.5
+						if v.Team == game:GetService("Players").LocalPlayer.Team then
+							Textlb.TextColor3 = Color3.new(0, 255, 0)
+						else
+							Textlb.TextColor3 = Color3.new(0, 0, 204)
+						end
+					else
+						v.Character.Head["PlayerESP"..Number].TextLabel.Text = v.Name.."\n"..math.round((v.Character.Head.Position - game:GetService('Players').LocalPlayer.Character.HumanoidRootPart.Position).Magnitude/3).." m."
+					end
+				else
+					if v.Character.Head:FindFirstChild("PlayerESP"..Number) then
+						v.Character.Head:FindFirstChild("PlayerESP"..Number):Destroy()
+					end
+				end
+			end
+		end)
+	end
 end
 
 local lp = game:GetService('Players').LocalPlayer
