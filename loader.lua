@@ -6035,6 +6035,45 @@ Misc:AddSlider({
 	end
 })
 
+function UpdatePlayer()
+	for i,v in pairs(game:GetService("Players"):GetChildren()) do
+		pcall(function()
+			if v.Character then
+				if _G.ESP_Player then
+					if v.Character.Head and not v.Character.Head:FindFirstChild("PlayerESP"..Number) then
+						if v.Name ~= game.Players.LocalPlayer.Name then
+						local Bb = Instance.new("BillboardGui", v.Character.Head)
+						Bb.Name = "PlayerESP"..Number
+						Bb.ExtentsOffset = Vector3.new(0, 1, 0)
+						Bb.Size = UDim2.new(1, 200, 1, 30)
+						Bb.Adornee = v.Character.Head
+						Bb.AlwaysOnTop = true
+						local Textlb = Instance.new("TextLabel", Bb)
+						Textlb.Font = "GothamBold"
+						Textlb.FontSize = "Size14"
+						Textlb.Text = v.Name.."\n"..math.round((v.Character.Head.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).Magnitude/3).." m."
+						Textlb.Size = UDim2.new(1,0,1,0)
+						Textlb.BackgroundTransparency = 1
+						Textlb.TextStrokeTransparency = 0.5
+						if v.Team == game:GetService("Players").LocalPlayer.Team then
+							Textlb.TextColor3 = Color3.new(0, 255, 0)
+						else
+							Textlb.TextColor3 = Color3.new(0, 0, 204)
+						end
+						end
+					else
+						v.Character.Head["PlayerESP"..Number].TextLabel.Text = v.Name.."\n"..math.round((v.Character.Head.Position - game:GetService('Players').LocalPlayer.Character.HumanoidRootPart.Position).Magnitude/3).." m."
+					end
+				else
+					if v.Character.Head:FindFirstChild("PlayerESP"..Number) then
+						v.Character.Head:FindFirstChild("PlayerESP"..Number):Destroy()
+					end
+				end
+			end
+		end)
+	end
+end
+
 Misc:AddToggle{
 	Name = "ESP Player",
 	Flag = "ESP_Player",
@@ -6065,43 +6104,6 @@ local function round(n)
     return math.floor(tonumber(n) + 0.5)
 end
 Number = math.random(1, 1000000)
-
-function UpdatePlayer()
-	for i,v in pairs(game:GetService("Players"):GetChildren()) do
-		pcall(function()
-			if v.Character then
-				if _G.ESP_Player then
-					if v.Character.Head and not v.Character.Head:FindFirstChild("PlayerESP"..Number) then
-						local Bb = Instance.new("BillboardGui", v.Character.Head)
-						Bb.Name = "PlayerESP"..Number
-						Bb.ExtentsOffset = Vector3.new(0, 1, 0)
-						Bb.Size = UDim2.new(1, 200, 1, 30)
-						Bb.Adornee = v.Character.Head
-						Bb.AlwaysOnTop = true
-						local Textlb = Instance.new("TextLabel", Bb)
-						Textlb.Font = "GothamBold"
-						Textlb.FontSize = "Size14"
-						Textlb.Text = v.Name.."\n"..math.round((v.Character.Head.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).Magnitude/3).." m."
-						Textlb.Size = UDim2.new(1,0,1,0)
-						Textlb.BackgroundTransparency = 1
-						Textlb.TextStrokeTransparency = 0.5
-						if v.Team == game:GetService("Players").LocalPlayer.Team then
-							Textlb.TextColor3 = Color3.new(0, 255, 0)
-						else
-							Textlb.TextColor3 = Color3.new(0, 0, 204)
-						end
-					else
-						v.Character.Head["PlayerESP"..Number].TextLabel.Text = v.Name.."\n"..math.round((v.Character.Head.Position - game:GetService('Players').LocalPlayer.Character.HumanoidRootPart.Position).Magnitude/3).." m."
-					end
-				else
-					if v.Character.Head:FindFirstChild("PlayerESP"..Number) then
-						v.Character.Head:FindFirstChild("PlayerESP"..Number):Destroy()
-					end
-				end
-			end
-		end)
-	end
-end
 
 local lp = game:GetService('Players').LocalPlayer
 local mouse = lp:GetMouse()
