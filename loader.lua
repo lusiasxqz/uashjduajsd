@@ -6042,7 +6042,7 @@ Misc:AddToggle{
 	Callback  = function(value)
 	_G.ESP_Player = value
 		while _G.ESP_Player do wait()
-			UpdateEspPlayer()
+			UpdatePlayer()
 		end
 	end
 }
