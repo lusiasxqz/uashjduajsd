@@ -6051,7 +6051,7 @@ function UpdatePlayer()
 						local Textlb = Instance.new("TextLabel", Bb)
 						Textlb.Font = "GothamBold"
 						Textlb.FontSize = "Size14"
-						Textlb.Text = v.Name.."\n"..math.round((v.Character.Head.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).Magnitude/3).." m."
+						Textlb.Text = v.Name.."\n"..math.round((v.Character.Head.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).Magnitude/3).." m.\nHealth "..v.Character.Humanoid.Health 
 						Textlb.Size = UDim2.new(1,0,1,0)
 						Textlb.BackgroundTransparency = 1
 						Textlb.TextStrokeTransparency = 0.5
@@ -6062,7 +6062,7 @@ function UpdatePlayer()
 						end
 						end
 					else
-						v.Character.Head["PlayerESP"..Number].TextLabel.Text = v.Name.."\n"..math.round((v.Character.Head.Position - game:GetService('Players').LocalPlayer.Character.HumanoidRootPart.Position).Magnitude/3).." m."
+						v.Character.Head["PlayerESP"..Number].TextLabel.Text = v.Name.."\n"..math.round((v.Character.Head.Position - game:GetService('Players').LocalPlayer.Character.HumanoidRootPart.Position).Magnitude/3).." m.\n"..v.Character.Humanoid.Health
 					end
 				else
 					if v.Character.Head:FindFirstChild("PlayerESP"..Number) then
@@ -6086,6 +6086,42 @@ Misc:AddToggle{
 	end
 }
 
+Misc:AddToggle({
+	Name = "Float",
+	Flag = "Float",
+	Value = _G.Float,
+	Callback = function(value)
+	_G.Float = value
+	StopBodyClip(_G.Float)
+	end
+})
+
+spawn(function()
+	while wait() do
+		pcall(function()
+			if _G.Float then
+				if not game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip") then
+					local Noclip = Instance.new("BodyVelocity")
+					Noclip.Name = "BodyClip"
+					Noclip.Parent = game:GetService("Players").LocalPlayer.Character.HumanoidRootPart
+					Noclip.MaxForce = Vector3.new(100000, 100000, 100000)
+					Noclip.Velocity = Vector3.new(0, 0, 0)
+				end
+			end
+		end)
+	end
+end)
+
+function StopBodyClip(AE)
+    if not AE then
+        _G.StopTween = true
+		wait()
+        if game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip") then
+            game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip"):Destroy()
+        end
+        _G.StopTween = false
+    end
+end
 
 
 
