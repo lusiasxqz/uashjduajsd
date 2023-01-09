@@ -6051,7 +6051,7 @@ function UpdatePlayer()
 						local Textlb = Instance.new("TextLabel", Bb)
 						Textlb.Font = "GothamBold"
 						Textlb.FontSize = "Size14"
-						Textlb.Text = v.Name.."\n"..math.round((v.Character.Head.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).Magnitude/3).." m.\nHealth "..v.Character.Humanoid.Health 
+						Textlb.Text = v.Name.."\n"..math.round((v.Character.Head.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).Magnitude/3).." m."
 						Textlb.Size = UDim2.new(1,0,1,0)
 						Textlb.BackgroundTransparency = 1
 						Textlb.TextStrokeTransparency = 0.5
@@ -6062,7 +6062,7 @@ function UpdatePlayer()
 						end
 						end
 					else
-						v.Character.Head["PlayerESP"..Number].TextLabel.Text = v.Name.."\n"..math.round((v.Character.Head.Position - game:GetService('Players').LocalPlayer.Character.HumanoidRootPart.Position).Magnitude/3).." m.\n"..v.Character.Humanoid.Health
+						v.Character.Head["PlayerESP"..Number].TextLabel.Text = v.Name.."\n"..math.round((v.Character.Head.Position - game:GetService('Players').LocalPlayer.Character.HumanoidRootPart.Position).Magnitude/3).." m."
 					end
 				else
 					if v.Character.Head:FindFirstChild("PlayerESP"..Number) then
