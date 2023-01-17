@@ -6043,6 +6043,7 @@ MythicIsland:AddToggle{
 	Value = _G.Teleport_to_Gear,
 	Callback  = function(value)
 	_G.Teleport_to_Gear = value
+	StopBodyClip(_G.Teleport_to_Gear)
 	end
 }
 
@@ -6153,7 +6154,7 @@ Misc:AddToggle({
 spawn(function()
 	while wait() do
 		pcall(function()
-			if _G.Float then
+			if _G.Float or _G.Teleport_to_Gear then
 				if not game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip") then
 					local Noclip = Instance.new("BodyVelocity")
 					Noclip.Name = "BodyClip"
