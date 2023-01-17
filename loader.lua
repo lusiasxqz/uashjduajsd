@@ -6021,6 +6021,60 @@ local Misc = General:CreateSection({
     Name = "Misc", -- ชื่อ
     Side = "Right" -- ตำแหน่ง Left/Right
 })
+local MythicIsland = General:CreateSection({
+    Name = "Mythic Island", -- ชื่อ
+    Side = "Left" -- ตำแหน่ง Left/Right
+})
+
+function topos(Pos)
+    Distance = (Pos.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+    if game.Players.LocalPlayer.Character.Humanoid.Sit == true then game.Players.LocalPlayer.Character.Humanoid.Sit = false end
+    pcall(function() tween = game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character.HumanoidRootPart,TweenInfo.new(Distance/210, Enum.EasingStyle.Linear),{CFrame = Pos}) end)
+    tween:Play()
+    if Distance <= 250 then
+        tween:Cancel()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Pos
+    end
+end
+
+MythicIsland:AddToggle{
+	Name = "Teleport to Mythic Gear",
+	Flag = "Teleport_to_Gear",
+	Value = _G.Teleport_to_Gear,
+	Callback  = function(value)
+	_G.Teleport_to_Gear = value
+	end
+}
+
+MythicSpawn = MythicIsland:AddLabel({Name = "Mythic Island : N/A"})
+
+spawn(function()
+	while wait() do
+		pcall(function()
+			if game:GetService("Workspace").Map:FindFirstChild("MysticIsland") then
+				MythicSpawn:Set("Mythic Island : ✅")
+			elseif not game:GetService("Workspace").Map:FindFirstChild("MysticIsland") then
+				MythicSpawn:Set("Mythic Island : ❌")
+			end
+		end)
+	end
+end)
+
+spawn(function()
+	while wait() do
+		pcall(function()
+			if _G.Teleport_to_Gear then
+				for i,v in pairs(game:GetService("Workspace").Map.MyMysticIsland:GetChildren()) do
+					if v.Name == "Part" then
+						if v.ClassName == "MeshPart" then
+							topos(CFrame.new(v.Position))
+						end	
+					end
+				end
+			end
+		end)
+	end
+end)
 
 Misc:AddSlider({
 	Name = "Walk Speed",
