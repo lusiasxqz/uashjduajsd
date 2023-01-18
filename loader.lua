@@ -6038,7 +6038,7 @@ function topos(Pos)
 end
 
 MythicIsland:AddToggle{
-	Name = "Teleport to Mythic Gear",
+	Name = "Teleport to Gear",
 	Flag = "Teleport_to_Gear",
 	Value = _G.Teleport_to_Gear,
 	Callback  = function(value)
@@ -6065,7 +6065,7 @@ spawn(function()
 	while wait() do
 		pcall(function()
 			if _G.Teleport_to_Gear then
-				for i,v in pairs(game:GetService("Workspace").Map.MyMysticIsland:GetChildren()) do
+				for i,v in pairs(game:GetService("Workspace").Map.MysticIsland:GetChildren()) do
 					if v.Name == "Part" then
 						if v.ClassName == "MeshPart" then
 							topos(CFrame.new(v.Position))
