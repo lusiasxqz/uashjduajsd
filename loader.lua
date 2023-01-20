@@ -6055,7 +6055,7 @@ end
 spawn(function()
     pcall(function()
         game:GetService("RunService").Stepped:Connect(function()
-            if _G.Teleport_to_Mythic_Island or _G.Teleport_to_Gear then
+            if _G.Teleport_to_Mythic_Island or _G.Teleport_to_Gear or _G.Float then
                 if not game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip") then
                     local Noclip = Instance.new("BodyVelocity")
                     Noclip.Name = "BodyClip"
@@ -6075,7 +6075,7 @@ end)
 spawn(function()
     pcall(function()
         game:GetService("RunService").Stepped:Connect(function()
-            if _G.Teleport_to_Mythic_Island or _G.Teleport_to_Gear then
+            if _G.Teleport_to_Mythic_Island or _G.Teleport_to_Gear or _G.Float then
                 for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
                     if v:IsA("BasePart") then
                         v.CanCollide = false    
@@ -6220,14 +6220,14 @@ Misc:AddToggle({
 	Value = _G.Float,
 	Callback = function(value)
 	_G.Float = value
-	StopBodyClip(_G.Float)
+	StopTween(_G.Float)
 	end
 })
 
 spawn(function()
 	while wait() do
 		pcall(function()
-			if _G.Float or _G.Teleport_to_Gear then
+			if _G.Float then
 				if not game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip") then
 					local Noclip = Instance.new("BodyVelocity")
 					Noclip.Name = "BodyClip"
@@ -6273,8 +6273,6 @@ function StopBodyClip(AE)
         _G.StopTween = false
     end
 end
-
-
 
 spawn(function()
 	while wait() do
