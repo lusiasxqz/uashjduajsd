@@ -6240,6 +6240,29 @@ spawn(function()
 	end
 end)
 
+Misc:AddToggle{
+	Name = "Auto Press W",
+	Flag = "Auto_Press_W",
+	Value = _G.Auto_Press_W,
+	Callback  = function(value)
+		_G.Auto_Press_W = value
+	end
+}
+
+spawn(function()
+	while wait() do
+		pcall(function()
+			if _G.Auto_Press_W then
+				local VirtualInputManager = game:GetService('VirtualInputManager')
+				VirtualInputManager:SendKeyEvent(true, "W", false, game)
+				wait()
+				VirtualInputManager:SendKeyEvent(false, "W", false, game)
+			end
+		end)
+	end
+end)
+
+
 function StopBodyClip(AE)
     if not AE then
         _G.StopTween = true
