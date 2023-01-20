@@ -6037,17 +6037,78 @@ function topos(Pos)
     end
 end
 
+function StopTween(target)
+    if not target then
+        _G.StopTween = true
+        wait()
+        tween:Cancel()
+        topos(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame)
+        wait()
+        if game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip") then
+            game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip"):Destroy()
+        end
+        _G.StopTween = false
+        _G.Clip = false
+    end
+end
+
+spawn(function()
+    pcall(function()
+        game:GetService("RunService").Stepped:Connect(function()
+            if _G.Teleport_to_Mythic_Island or _G.Teleport_to_Gear then
+                if not game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip") then
+                    local Noclip = Instance.new("BodyVelocity")
+                    Noclip.Name = "BodyClip"
+                    Noclip.Parent = game.Players.LocalPlayer.Character.HumanoidRootPart
+                    Noclip.MaxForce = Vector3.new(100000,100000,100000)
+                    Noclip.Velocity = Vector3.new(0,0,0)
+                end
+            else	
+                if game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip") then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip"):Destroy()
+                end
+            end
+        end)
+    end)
+end)
+ 
+spawn(function()
+    pcall(function()
+        game:GetService("RunService").Stepped:Connect(function()
+            if _G.Teleport_to_Mythic_Island or _G.Teleport_to_Gear then
+                for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+                    if v:IsA("BasePart") then
+                        v.CanCollide = false    
+                    end
+                end
+            end
+        end)
+    end)
+end)
+
+MythicSpawn = MythicIsland:AddLabel({Name = "Mythic Island : N/A"})
+
+MythicIsland:AddToggle{
+	Name = "Teleport to Mythic Island",
+	Flag = "Teleport_to_Mythic_Island",
+	Value = _G.Teleport_to_Mythic_Island,
+	Callback  = function(value)
+	_G.Teleport_to_Mythic_Island = value
+	StopTween(_G.Teleport_to_Mythic_Island)
+	end
+}
+
 MythicIsland:AddToggle{
 	Name = "Teleport to Gear",
 	Flag = "Teleport_to_Gear",
 	Value = _G.Teleport_to_Gear,
 	Callback  = function(value)
 	_G.Teleport_to_Gear = value
-	StopBodyClip(_G.Teleport_to_Gear)
+	StopTween(_G.Teleport_to_Gear)
 	end
 }
 
-MythicSpawn = MythicIsland:AddLabel({Name = "Mythic Island : N/A"})
+
 
 spawn(function()
 	while wait() do
@@ -6056,6 +6117,18 @@ spawn(function()
 				MythicSpawn:Set("Mythic Island : ✅")
 			elseif not game:GetService("Workspace").Map:FindFirstChild("MysticIsland") then
 				MythicSpawn:Set("Mythic Island : ❌")
+			end
+		end)
+	end
+end)
+
+spawn(function()
+	while wait() do
+		pcall(function()
+			if _G.Teleport_to_Mythic_Island and game:GetService("Workspace").Map:FindFirstChild("MysticIsland") then
+				for i,v in pairs(game:GetService("Workspace").Map.MysticIsland:GetChildren()) do
+					topos(CFrame.new(game:GetService("Workspace").Map.MysticIsland.PluginGrass.Position))
+				end
 			end
 		end)
 	end
