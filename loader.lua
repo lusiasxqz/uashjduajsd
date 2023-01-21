@@ -6025,6 +6025,25 @@ local MythicIsland = General:CreateSection({
     Name = "Mythic Island", -- ชื่อ
     Side = "Left" -- ตำแหน่ง Left/Right
 })
+local Server = General:CreateSection({
+    Name = "Server", -- ชื่อ
+    Side = "Right" -- ตำแหน่ง Left/Right
+})
+
+Server:AddTextBox({
+	Name = "JobId",
+	Value = _G.JobId,
+	Callback = function(value)
+		_G.JobId = value
+	end
+})
+
+Server:AddButton({
+	Name = "Join JobServer",
+	Callback = function()
+		game.TeleportService:TeleportToPlaceInstance(game.placeId,_G.JobId, game.Players.LocalPlayer)
+	end
+})
 
 function topos(Pos)
     Distance = (Pos.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
