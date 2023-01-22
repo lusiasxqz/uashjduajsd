@@ -6012,6 +6012,10 @@ local General = SixMaGUI:CreateTab({
     Name = " General"
 })
 
+local Automatic = SixMaGUI:CreateTab({
+    Name = " Automatic"
+})
+
 local Main = General:CreateSection({
     Name = "Main", -- ชื่อ
     Side = "Left" -- ตำแหน่ง Left/Right
@@ -6034,6 +6038,178 @@ local Server = General:CreateSection({
     Name = "Server", -- ชื่อ
     Side = "Right" -- ตำแหน่ง Left/Right
 })
+
+local EliteHunter = Automatic:CreateSection({
+    Name = "Elite Hunter", -- ชื่อ
+    Side = "Left" -- ตำแหน่ง Left/Right
+})
+
+local Elite_Hunter_Status = EliteHunter:AddLabel({
+	Name = "Status",
+})
+
+spawn(function()
+	while wait() do
+		pcall(function()
+			if game:GetService("ReplicatedStorage"):FindFirstChild("Diablo [Lv. 1750]") or game:GetService("ReplicatedStorage"):FindFirstChild("Deandre [Lv. 1750]") or game:GetService("ReplicatedStorage"):FindFirstChild("Urban [Lv. 1750]") or game:GetService("Workspace").Enemies:FindFirstChild("Diablo [Lv. 1750]") or game:GetService("Workspace").Enemies:FindFirstChild("Deandre [Lv. 1750]") or game:GetService("Workspace").Enemies:FindFirstChild("Urban [Lv. 1750]") then
+				Elite_Hunter_Status:Set("Status : ✅")	
+			else
+				Elite_Hunter_Status:Set("Status : ❌")	
+			end
+		end)
+	end
+end)
+
+local Total_Elite_Hunter = EliteHunter:AddLabel({
+	Name = "Total",
+	Flag = "Total"
+})
+
+spawn(function()
+	while wait() do
+		Total_Elite_Hunter:Set("Total : "..game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("EliteHunter","Progress"))
+	end
+end)
+
+EliteHunter:AddToggle({
+	Name = "Auto Elite Hunter",
+	Flag = "Auto_Elite_Hunter",
+	Value = _G.Auto_Elite_Hunter,
+	Callback = function(value)
+		_G.Auto_Elite_Hunter = value    
+		StopTween(_G.Auto_Elite_Hunter)
+	end
+})
+
+EliteHunter:AddToggle({
+	Name = "Auto Elite Hunter Hop",
+	Flag = "Auto_Elite_Hunter_Hop",
+	Value = _G.Auto_Elite_Hunter_Hop,
+	Callback = function(value)
+		_G.Auto_Elite_Hunter_Hop = value    
+	end
+})
+
+function AutoHaki()
+	if not game:GetService("Players").LocalPlayer.Character:FindFirstChild("HasBuso") then
+		game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Buso")
+	end
+end
+
+spawn(function()
+	while wait() do
+		if _G.Auto_Elite_Hunter then
+			pcall(function()
+				if game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Visible == true then
+					if string.find(game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Container.QuestTitle.Title.Text,"Diablo") or string.find(game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Container.QuestTitle.Title.Text,"Deandre") or string.find(game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Container.QuestTitle.Title.Text,"Urban") then
+						if game:GetService("Workspace").Enemies:FindFirstChild("Diablo [Lv. 1750]") or game:GetService("Workspace").Enemies:FindFirstChild("Deandre [Lv. 1750]") or game:GetService("Workspace").Enemies:FindFirstChild("Urban [Lv. 1750]") then
+							for i,v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
+								if v.Name == "Diablo [Lv. 1750]" or v.Name == "Deandre [Lv. 1750]" or v.Name == "Urban [Lv. 1750]" then
+									if v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
+										repeat wait()
+											AutoHaki()
+											EquipWeapon(_G.Select_Weapon)
+											v.HumanoidRootPart.CanCollide = false
+											v.Humanoid.WalkSpeed = 0
+											v.HumanoidRootPart.Size = Vector3.new(50,50,50)
+											topos(v.HumanoidRootPart.CFrame * CFrame.new(0,50,0))
+											game:GetService("VirtualUser"):CaptureController()
+											game:GetService("VirtualUser"):Button1Down(Vector2.new(1280,672))
+											sethiddenproperty(game:GetService("Players").LocalPlayer,"SimulationRadius",math.huge)
+										until _G.Auto_Elite_Hunter == false or v.Humanoid.Health <= 0 or not v.Parent
+									end
+								end
+							end
+						else
+							if game:GetService("ReplicatedStorage"):FindFirstChild("Diablo [Lv. 1750]") then
+								topos(game:GetService("ReplicatedStorage"):FindFirstChild("Diablo [Lv. 1750]").HumanoidRootPart.CFrame * CFrame.new(0,_G.Select_Distance,0))
+							elseif game:GetService("ReplicatedStorage"):FindFirstChild("Deandre [Lv. 1750]") then
+								topos(game:GetService("ReplicatedStorage"):FindFirstChild("Deandre [Lv. 1750]").HumanoidRootPart.CFrame * CFrame.new(0,_G.Select_Distance,0))
+							elseif game:GetService("ReplicatedStorage"):FindFirstChild("Urban [Lv. 1750]") then
+								topos(game:GetService("ReplicatedStorage"):FindFirstChild("Urban [Lv. 1750]").HumanoidRootPart.CFrame * CFrame.new(0,_G.Select_Distance,0))
+							end
+						end                    
+					end
+				else
+					if _G.Auto_Elite_Hunter_Hop and game:GetService("ReplicatedStorage").Remotes["CommF_"]:InvokeServer("EliteHunter") == "I don't have anything for you right now. Come back later." then
+						if game.Players.LocalPlayer.Backpack:FindFirstChild("God's Chalice") or game.Players.LocalPlayer.Character:FindFirstChild("God's Chalice") then
+							wait()
+						else
+							Teleport()
+						end
+					else
+						game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("EliteHunter")
+					end
+				end
+			end)
+		end
+	end
+end)
+
+Time = 1 -- seconds
+repeat wait() until game:IsLoaded()
+wait(Time)
+local PlaceID = game.PlaceId
+local AllIDs = {}
+local foundAnything = ""
+local actualHour = os.date("!*t").hour
+local Deleted = false
+function TPReturner()
+   local Site;
+   if foundAnything == "" then
+       Site = game.HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. PlaceID .. '/servers/Public?sortOrder=Asc&limit=100'))
+   else
+       Site = game.HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. PlaceID .. '/servers/Public?sortOrder=Asc&limit=100&cursor=' .. foundAnything))
+   end
+   local ID = ""
+   if Site.nextPageCursor and Site.nextPageCursor ~= "null" and Site.nextPageCursor ~= nil then
+       foundAnything = Site.nextPageCursor
+   end
+   local num = 0;
+   for i,v in pairs(Site.data) do
+       local Possible = true
+       ID = tostring(v.id)
+       if tonumber(v.maxPlayers) > tonumber(v.playing) then
+           for _,Existing in pairs(AllIDs) do
+               if num ~= 0 then
+                   if ID == tostring(Existing) then
+                       Possible = false
+                   end
+               else
+                   if tonumber(actualHour) ~= tonumber(Existing) then
+                       local delFile = pcall(function()
+                           delfile("NotSameServers.json")
+                           AllIDs = {}
+                           table.insert(AllIDs, actualHour)
+                       end)
+                   end
+               end
+               num = num + 1
+           end
+           if Possible == true then
+               table.insert(AllIDs, ID)
+               wait()
+               pcall(function()
+                   writefile("NotSameServers.json", game:GetService('HttpService'):JSONEncode(AllIDs))
+                   wait()
+                   game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceID, ID, game.Players.LocalPlayer)
+               end)
+               wait(4)
+           end
+       end
+   end
+end
+ 
+function Teleport()
+   while wait() do
+       pcall(function()
+           TPReturner()
+           if foundAnything ~= "" then
+               TPReturner()
+           end
+       end)
+   end
+end
 
 Server:AddTextBox({
 	Name = "JobId",
@@ -6059,7 +6235,7 @@ Server:AddButton({
 Server:AddButton({
 	Name = "Hop Server",
 	Callback = function()
-		Hop()
+		Teleport()
 	end
 })
 
@@ -6204,7 +6380,7 @@ end
 spawn(function()
     pcall(function()
         game:GetService("RunService").Stepped:Connect(function()
-            if _G.Teleport_to_Mythic_Island or _G.Teleport_to_Gear or _G.Float or _G.MobAura then
+            if _G.Teleport_to_Mythic_Island or _G.Teleport_to_Gear or _G.Float or _G.MobAura or _G.Auto_Elite_Hunter then
                 if not game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip") then
                     local Noclip = Instance.new("BodyVelocity")
                     Noclip.Name = "BodyClip"
@@ -6224,7 +6400,7 @@ end)
 spawn(function()
     pcall(function()
         game:GetService("RunService").Stepped:Connect(function()
-            if _G.Teleport_to_Mythic_Island or _G.Teleport_to_Gear or _G.Float or _G.MobAura then
+            if _G.Teleport_to_Mythic_Island or _G.Teleport_to_Gear or _G.Float or _G.MobAura or _G.Auto_Elite_Hunter then
                 for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
                     if v:IsA("BasePart") then
                         v.CanCollide = false    
@@ -6495,10 +6671,10 @@ require(game.ReplicatedStorage.Util.CameraShaker):Stop()
 spawn(function()
     while wait(.5) do
         pcall(function()
-            if _G.MobAura then
+            if _G.MobAura or _G.Auto_Elite_Hunter then
                 repeat wait(.2)
                     AttackNoCD()
-                until _G.MobAura == false
+                until _G.MobAura == false or not _G.Auto_Elite_Hunter
             end
         end)
     end
@@ -6508,7 +6684,7 @@ CombatFrameworkR = require(game:GetService("Players").LocalPlayer.PlayerScripts.
 y = debug.getupvalues(CombatFrameworkR)[2]
 spawn(function()
     game:GetService("RunService").RenderStepped:Connect(function()
-        if _G.MobAura then
+        if _G.MobAura or _G.Auto_Elite_Hunter then
             pcall(function()
                 CameraShaker:Stop()
                 y.activeController.timeToNextAttack = 0
@@ -6526,7 +6702,7 @@ spawn(function()
 end)
 spawn(function()
     game:GetService("RunService").RenderStepped:Connect(function()
-        if _G.MobAura then
+        if _G.MobAura or _G.Auto_Elite_Hunter then
             game.Players.LocalPlayer.Character.Stun.Value = 0
             game.Players.LocalPlayer.Character.Humanoid.Sit = false
             game.Players.LocalPlayer.Character.Busy.Value = false
@@ -6547,7 +6723,7 @@ end)
 
 
 spawn(function()
-    if _G.MobAura then
+    if _G.MobAura or _G.Auto_Elite_Hunter then
         while wait() do
             for i,v in pairs(game:GetService("Workspace")["_WorldOrigin"]:GetChildren()) do
                 pcall(function()
@@ -6643,12 +6819,12 @@ coroutine.wrap(function()
 while task.wait(.1) do
     local ac = CombatFrameworkR.activeController
         if ac and ac.equipped then
-            if _G.Normal_Fast_Attack and _G.AutoFarmLevel or _G.AutoFarmBone then
+            if _G.MobAura or _G.Auto_Elite_Hunter then
                 AttackFunction()
-                if _G.Normal_Fast_Attack and _G.AutoFarmLevel or _G.AutoFarmBone then
+                if _G.MobAura or _G.Auto_Elite_Hunter then
                     if tick() - cooldownfastattack > 5 then wait(.9) cooldownfastattack = tick() end
                 end
-            elseif _G.Normal_Fast_Attack and _G.AutoFarmLevel or _G.AutoFarmBone == true then
+            elseif _G.MobAura or _G.Auto_Elite_Hunter then
                 if ac.hitboxMagnitude ~= 55 then
                     ac.hitboxMagnitude = 55
                 end
@@ -6696,7 +6872,7 @@ end
 task.spawn(
     function()
     while wait(0) do
-        if  _G.MobAura then
+        if  _G.MobAura or _G.Auto_Elite_Hunter then
             if SeraphFrame.activeController then
                 -- if v.Humanoid.Health > 0 then
                     SeraphFrame.activeController.timeToNextAttack = 0
@@ -6745,7 +6921,7 @@ end
 b = tick()
 spawn(function()
     while wait(.2) do
-        if _G.MobAura then
+        if _G.MobAura or _G.Auto_Elite_Hunter then
             if b - tick() > 0.99 then
                 wait(.2)
                 b = tick()
@@ -6768,7 +6944,7 @@ end)
 k = tick()
 spawn(function()
     while wait(0.059) do
-        if _G.MobAura then
+        if _G.MobAura or _G.Auto_Elite_Hunter then
             if k - tick() > 0.99 then
                 wait(0)
                 k = tick()
@@ -6897,7 +7073,7 @@ end)
     
     spawn(function()
     game:GetService("RunService").Heartbeat:Connect(function()
-        if _G.MobAura or _G.Teleport_to_Mythic_Island or _G.Teleport_to_Gear then
+        if _G.MobAura or _G.Teleport_to_Mythic_Island or _G.Teleport_to_Gear or _G.Auto_Elite_Hunter then
             if game:GetService("Players").LocalPlayer.Character:FindFirstChild("Humanoid") then
                 setfflag("HumanoidParallelRemoveNoPhysics", "False")
                 setfflag("HumanoidParallelRemoveNoPhysicsNoSimulate2", "False")
@@ -6909,7 +7085,7 @@ end)
 
 spawn(function()
     while wait() do
-        if _G.MobAura then
+        if _G.MobAura or _G.Auto_Elite_Hunter then
             pcall(function()
                 game:GetService("Players").LocalPlayer.Idled:connect(function()
                     game:GetService("VirtualUser"):Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
