@@ -6669,10 +6669,10 @@ function AttackNoCD()
 end
 require(game.ReplicatedStorage.Util.CameraShaker):Stop()
 spawn(function()
-    while wait(.5) do
+    while wait(.1) do
         pcall(function()
             if _G.MobAura or _G.Auto_Elite_Hunter then
-                repeat wait(.2)
+                repeat wait(.05)
                     AttackNoCD()
                 until _G.MobAura == false or not _G.Auto_Elite_Hunter
             end
