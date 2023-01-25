@@ -55,16 +55,16 @@ local library = {
 		easingDirection = Enum.EasingDirection.Out
 	},
 	colors = {
-		main = Color3.fromRGB(80, 245, 245),
-		background = Color3.fromRGB(40, 40, 40),
+		main = Color3.fromRGB(255, 0, 70),
+		background = Color3.fromRGB(34, 34, 34),
 		outerBorder = Color3.fromRGB(15, 15, 15),
-		innerBorder = Color3.fromRGB(73, 63, 73),
+		innerBorder = Color3.fromRGB(87, 0, 23),
 		topGradient = Color3.fromRGB(35, 35, 35),
 		bottomGradient = Color3.fromRGB(29, 29, 29),
 		sectionBackground = Color3.fromRGB(35, 34, 34),
 		section = Color3.fromRGB(176, 175, 176),
 		otherElementText = Color3.fromRGB(129, 127, 129),
-		elementText = Color3.fromRGB(147, 145, 147),
+		elementText = Color3.fromRGB(185, 185, 185),
 		elementBorder = Color3.fromRGB(20, 20, 20),
 		selectedOption = Color3.fromRGB(55, 55, 55),
 		unselectedOption = Color3.fromRGB(40, 40, 40),
@@ -72,7 +72,7 @@ local library = {
 		unhoveredOptionTop = Color3.fromRGB(50, 50, 50),
 		hoveredOptionBottom = Color3.fromRGB(45, 45, 45),
 		unhoveredOptionBottom = Color3.fromRGB(35, 35, 35),
-		tabText = Color3.fromRGB(185, 185, 185)
+		tabText = Color3.fromRGB(190, 190, 190)
 	},
 	gui_parent = (function()
 		local x, c = pcall(function()
@@ -6008,13 +6008,58 @@ local SixMaGUI = library:CreateWindow({
     }
 })
 
+_G.Settings = {
+	Auto_Elite_Hunter = false;
+	Auto_Elite_Hunter_Hop = false;
+	Auto_Find_Moon_Hop = false;
+	Moon_Stage = "8/8 [FullMoon]";
+	StopWhenGodChalice = false;
+	BypassTP = false;
+	NotifyWhenGodChalice = false;
+	WebhookEH_URL = "";
+}
+
+local foldername = "SixMa Hub"
+local filename = game.Players.LocalPlayer.Name.." Config.json"
+ 
+function saveSettings()
+	local HttpService = game:GetService("HttpService")
+	local json = HttpService:JSONEncode(_G.Settings)
+	if (writefile) then
+		if isfolder(foldername) then
+			if isfile(foldername.."\\"..filename) then
+				writefile(foldername.."\\"..filename, json)
+			else
+				writefile(foldername.."\\"..filename, json)
+			end
+		else
+			makefolder(foldername)
+			writefile(foldername.."\\"..filename, json)
+		end
+	end
+end
+
+function loadSettings()
+	local HttpService = game:GetService("HttpService")
+	if isfile(foldername.."\\"..filename) then
+		_G.Settings = HttpService:JSONDecode(readfile(foldername.."\\"..filename))
+	end
+end
+ 
+loadSettings()
+
 local General = SixMaGUI:CreateTab({
-    Name = " General"
+    Name = "General"
 })
 
 local Automatic = SixMaGUI:CreateTab({
-    Name = " Automatic"
+    Name = "Automatic"
 })
+
+local Island = SixMaGUI:CreateTab({
+    Name = "Island"
+})
+
 
 local Main = General:CreateSection({
     Name = "Main", -- ชื่อ
@@ -6043,25 +6088,296 @@ local EliteHunter = Automatic:CreateSection({
     Name = "Elite Hunter", -- ชื่อ
     Side = "Left" -- ตำแหน่ง Left/Right
 })
+local Moon = Automatic:CreateSection({
+    Name = "Moon", -- ชื่อ
+    Side = "Right" -- ตำแหน่ง Left/Right
+})
+
+local Teleport = Island:CreateSection({
+    Name = "Teleport", -- ชื่อ
+    Side = "Left" -- ตำแหน่ง Left/Right
+})
+local WorldTeleport = Island:CreateSection({
+    Name = "World", -- ชื่อ
+    Side = "Right" -- ตำแหน่ง Left/Right
+})
 
 local Elite_Hunter_Status = EliteHunter:AddLabel({
 	Name = "Status",
+})
+
+	MoonStage = {
+		"1/8",
+		"2/8",
+		"3/8",
+		"4/8",
+		"5/8",
+		"6/8",
+		"7/8",
+		"8/8 [FullMoon]",
+		}
+
+Moon:AddDropdown({
+	Name = "Moon Stage",
+	Flag = "Moon_Stage",
+	List = MoonStage,
+	Value = _G.Settings.Moon_Stage,
+	Callback = function(value)
+		_G.MoonStage = value
+		_G.Settings.Moon_Stage = value
+		saveSettings()
+	end
+})
+Moon:AddToggle({
+	Name = "Auto Find Moon Hop",
+	Flag = "Auto_Find_Moon_Hop",
+	Value = _G.Settings.Auto_Find_Moon_Hop,
+	Callback = function(value)
+		_G.Auto_Find_Moon_Hop = value
+		_G.Settings.Auto_Find_Moon_Hop = value
+		saveSettings()
+	end
+})
+
+spawn(function()
+	while wait() do
+		if _G.MoonStage == "8/8 [FullMoon]" then
+			_G.MoonId = 9709149431
+		elseif _G.MoonStage == "7/8" then
+			_G.MoonId = 9709149052
+		elseif _G.MoonStage == "1/8" then
+			_G.MoonId = 9709149680
+		end
+	end
+end)
+
+spawn(function()
+	while wait() do
+		pcall(function()
+			if _G.Auto_Find_Moon_Hop then
+				spawn(function()
+					while wait() do
+						pcall(function()
+							if game:GetService("Lighting").Sky.MoonTextureId == "http://www.roblox.com/asset/?id=".._G.MoonId then
+								wait(99999999999999999999999999)
+							else
+									Teleport()
+							end
+						end)
+					end
+				end)
+			end
+		end)
+	end
+end)
+
+if World1 then
+	Island = {
+		"WindMill",
+		"Marine",
+		"Middle Town",
+		"Jungle",
+		"Pirate Village",
+		"Desert",
+		"Snow Island",
+		"MarineFord",
+		"Colosseum",
+		"Sky Island 1",
+		"Sky Island 2",
+		"Sky Island 3",
+		"Prison",
+		"Magma Village",
+		"Under Water Island",
+		"Fountain City",
+		"Shank Room",
+		"Mob Island"
+		}
+elseif World2 then  
+	Island = {
+		"The Cafe",
+		"Frist Spot",
+		"Dark Area",
+		"Flamingo Mansion",
+		"Flamingo Room",
+		"Green Zone",
+		"Factory",
+		"Colossuim",
+		"Zombie Island",
+		"Two Snow Mountain",
+		"Punk Hazard",
+		"Cursed Ship",
+		"Ice Castle",
+		"Forgotten Island",
+		"Ussop Island",
+		"Mini Sky Island"
+		}
+else
+	Island = {
+		"Mansion",
+		"Port Town",
+		"Great Tree",
+		"Castle On The Sea",
+		"MiniSky", 
+		"Hydra Island",
+		"Floating Turtle",
+		"Haunted Castle",
+		"Ice Cream Island",
+		"Peanut Island",
+		"Cake Island"
+		}	
+end
+
+
+WorldTeleport:AddButton({
+	Name = "Teleport to Main",
+	Callback = function()
+		game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("TravelMain")
+	end
+})
+
+WorldTeleport:AddButton({
+	Name = "Teleport to Dressrosa",
+	Callback = function()
+		game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("TravelDressrosa")
+	end
+})
+
+WorldTeleport:AddButton({
+	Name = "Teleport to Zou",
+	Callback = function()
+		game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("TravelZou")
+	end
+})
+
+Teleport:AddDropdown({
+	Name = "Island",
+	Flag = "Island",
+	List = Island,
+	Value = "Select Island",
+	Callback = function(value)
+		_G.Select_Island = value
+	end
+})
+
+Teleport:AddToggle({
+	Name = "Teleport to Island",
+	Flag = "Teleport to Island",
+	Value = _G.TeleporttoIsland,
+	Callback = function(value)
+		_G.TeleporttoIsland = value    
+		if _G.TeleporttoIsland == true then
+			repeat wait()
+				if _G.Select_Island == "WindMill" then
+					topos(CFrame.new(979.79895019531, 16.516613006592, 1429.0466308594))
+				elseif _G.Select_Island == "Marine" then
+					topos(CFrame.new(-2566.4296875, 6.8556680679321, 2045.2561035156))
+				elseif _G.Select_Island == "Middle Town" then
+					topos(CFrame.new(-690.33081054688, 15.09425163269, 1582.2380371094))
+				elseif _G.Select_Island == "Jungle" then
+					topos(CFrame.new(-1612.7957763672, 36.852081298828, 149.12843322754))
+				elseif _G.Select_Island == "Pirate Village" then
+					topos(CFrame.new(-1181.3093261719, 4.7514905929565, 3803.5456542969))
+				elseif _G.Select_Island == "Desert" then
+					topos(CFrame.new(944.15789794922, 20.919729232788, 4373.3002929688))
+				elseif _G.Select_Island == "Snow Island" then
+					topos(CFrame.new(1347.8067626953, 104.66806030273, -1319.7370605469))
+				elseif _G.Select_Island == "MarineFord" then
+					topos(CFrame.new(-4914.8212890625, 50.963626861572, 4281.0278320313))
+				elseif _G.Select_Island == "Colosseum" then
+					topos( CFrame.new(-1427.6203613281, 7.2881078720093, -2792.7722167969))
+				elseif _G.Select_Island == "Sky Island 1" then
+					topos(CFrame.new(-4869.1025390625, 733.46051025391, -2667.0180664063))
+				elseif _G.Select_Island == "Sky Island 2" then  
+					game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",Vector3.new(-4607.82275, 872.54248, -1667.55688))
+				elseif _G.Select_Island == "Sky Island 3" then
+					game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",Vector3.new(-7894.6176757813, 5547.1416015625, -380.29119873047))
+				elseif _G.Select_Island == "Prison" then
+					topos( CFrame.new(4875.330078125, 5.6519818305969, 734.85021972656))
+				elseif _G.Select_Island == "Magma Village" then
+					topos(CFrame.new(-5247.7163085938, 12.883934020996, 8504.96875))
+				elseif _G.Select_Island == "Under Water Island" then
+					game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",Vector3.new(61163.8515625, 11.6796875, 1819.7841796875))
+				elseif _G.Select_Island == "Fountain City" then
+					topos(CFrame.new(5127.1284179688, 59.501365661621, 4105.4458007813))
+				elseif _G.Select_Island == "Shank Room" then
+					topos(CFrame.new(-1442.16553, 29.8788261, -28.3547478))
+				elseif _G.Select_Island == "Mob Island" then
+					topos(CFrame.new(-2850.20068, 7.39224768, 5354.99268))
+				elseif _G.Select_Island == "The Cafe" then
+					topos(CFrame.new(-380.47927856445, 77.220390319824, 255.82550048828))
+				elseif _G.Select_Island == "Frist Spot" then
+					topos(CFrame.new(-11.311455726624, 29.276733398438, 2771.5224609375))
+				elseif _G.Select_Island == "Dark Area" then
+					topos(CFrame.new(3780.0302734375, 22.652164459229, -3498.5859375))
+				elseif _G.Select_Island == "Flamingo Mansion" then
+					topos(CFrame.new(-483.73370361328, 332.0383605957, 595.32708740234))
+				elseif _G.Select_Island == "Flamingo Room" then
+					topos(CFrame.new(2284.4140625, 15.152037620544, 875.72534179688))
+				elseif _G.Select_Island == "Green Zone" then
+					topos( CFrame.new(-2448.5300292969, 73.016105651855, -3210.6306152344))
+				elseif _G.Select_Island == "Factory" then
+					topos(CFrame.new(424.12698364258, 211.16171264648, -427.54049682617))
+				elseif _G.Select_Island == "Colossuim" then
+					topos( CFrame.new(-1503.6224365234, 219.7956237793, 1369.3101806641))
+				elseif _G.Select_Island == "Zombie Island" then
+					topos(CFrame.new(-5622.033203125, 492.19604492188, -781.78552246094))
+				elseif _G.Select_Island == "Two Snow Mountain" then
+					topos(CFrame.new(753.14288330078, 408.23559570313, -5274.6147460938))
+				elseif _G.Select_Island == "Punk Hazard" then
+					topos(CFrame.new(-6127.654296875, 15.951762199402, -5040.2861328125))
+				elseif _G.Select_Island == "Cursed Ship" then
+					topos(CFrame.new(923.40197753906, 125.05712890625, 32885.875))
+				elseif _G.Select_Island == "Ice Castle" then
+					topos(CFrame.new(6148.4116210938, 294.38687133789, -6741.1166992188))
+				elseif _G.Select_Island == "Forgotten Island" then
+					topos(CFrame.new(-3032.7641601563, 317.89672851563, -10075.373046875))
+				elseif _G.Select_Island == "Ussop Island" then
+					topos(CFrame.new(4816.8618164063, 8.4599885940552, 2863.8195800781))
+				elseif _G.Select_Island == "Mini Sky Island" then
+					topos(CFrame.new(-288.74060058594, 49326.31640625, -35248.59375))
+				elseif _G.Select_Island == "Great Tree" then
+					topos(CFrame.new(2681.2736816406, 1682.8092041016, -7190.9853515625))
+				elseif _G.Select_Island == "Castle On The Sea" then
+					topos(CFrame.new(-5074.45556640625, 314.5155334472656, -2991.054443359375))
+				elseif _G.Select_Island == "MiniSky" then
+					topos(CFrame.new(-260.65557861328, 49325.8046875, -35253.5703125))
+				elseif _G.Select_Island == "Port Town" then
+					topos(CFrame.new(-290.7376708984375, 6.729952812194824, 5343.5537109375))
+				elseif _G.Select_Island == "Hydra Island" then
+					topos(CFrame.new(5228.8842773438, 604.23400878906, 345.0400390625))
+				elseif _G.Select_Island == "Floating Turtle" then
+					topos(CFrame.new(-13274.528320313, 531.82073974609, -7579.22265625))
+				elseif _G.Select_Island == "Mansion" then
+					game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance",Vector3.new(-12471.169921875, 374.94024658203, -7551.677734375))
+				elseif _G.Select_Island == "Haunted Castle" then
+					topos(CFrame.new(-9515.3720703125, 164.00624084473, 5786.0610351562))
+				elseif _G.Select_Island == "Ice Cream Island" then
+					topos(CFrame.new(-902.56817626953, 79.93204498291, -10988.84765625))
+				elseif _G.Select_Island == "Peanut Island" then
+					topos(CFrame.new(-2062.7475585938, 50.473892211914, -10232.568359375))
+				elseif _G.Select_Island == "Cake Island" then
+					topos(CFrame.new(-1884.7747802734375, 19.327526092529297, -11666.8974609375))
+				end
+			until not _G.TeleporttoIsland
+		end
+		StopTween(_G.TeleporttoIsland)
+	end
 })
 
 spawn(function()
 	while wait() do
 		pcall(function()
 			if game:GetService("ReplicatedStorage"):FindFirstChild("Diablo [Lv. 1750]") or game:GetService("ReplicatedStorage"):FindFirstChild("Deandre [Lv. 1750]") or game:GetService("ReplicatedStorage"):FindFirstChild("Urban [Lv. 1750]") or game:GetService("Workspace").Enemies:FindFirstChild("Diablo [Lv. 1750]") or game:GetService("Workspace").Enemies:FindFirstChild("Deandre [Lv. 1750]") or game:GetService("Workspace").Enemies:FindFirstChild("Urban [Lv. 1750]") then
-				Elite_Hunter_Status:Set("Status : ✅")	
+				Elite_Hunter_Status:Set("Elite Hunter Status : ✅")	
 			else
-				Elite_Hunter_Status:Set("Status : ❌")	
+				Elite_Hunter_Status:Set("Elite Hunter Status : ❌")	
 			end
 		end)
 	end
 end)
 
 local Total_Elite_Hunter = EliteHunter:AddLabel({
-	Name = "Total",
+	Name = "Total Elite Hunter",
 	Flag = "Total"
 })
 
@@ -6074,9 +6390,11 @@ end)
 EliteHunter:AddToggle({
 	Name = "Auto Elite Hunter",
 	Flag = "Auto_Elite_Hunter",
-	Value = _G.Auto_Elite_Hunter,
+	Value = _G.Settings.Auto_Elite_Hunter,
 	Callback = function(value)
-		_G.Auto_Elite_Hunter = value    
+		_G.Auto_Elite_Hunter = value
+		_G.Settings.Auto_Elite_Hunter = value    
+		saveSettings()
 		StopTween(_G.Auto_Elite_Hunter)
 	end
 })
@@ -6084,9 +6402,77 @@ EliteHunter:AddToggle({
 EliteHunter:AddToggle({
 	Name = "Auto Elite Hunter Hop",
 	Flag = "Auto_Elite_Hunter_Hop",
-	Value = _G.Auto_Elite_Hunter_Hop,
+	Value = _G.Settings.Auto_Elite_Hunter_Hop,
 	Callback = function(value)
 		_G.Auto_Elite_Hunter_Hop = value    
+		_G.Settings.Auto_Elite_Hunter_Hop = value
+		saveSettings()
+	end
+})
+
+EliteHunter:AddToggle({
+	Name = "Stop When God's Chalice",
+	Flag = "StopWhenGodChalice",
+	Value = _G.Settings.StopWhenGodChalice,
+	Callback = function(value)
+		_G.StopWhenGodChalice = value  
+		_G.Settings.StopWhenGodChalice = value
+		saveSettings()  
+	end
+})
+
+EliteHunter:AddToggle({
+	Name = "Notify When God's Chalice",
+	Flag = "NotifyWhenGodChalice",
+	Value = _G.Settings.NotifyWhenGodChalice,
+	Callback = function(value)
+		_G.NotifyWhenGodChalice = value  
+		_G.Settings.NotifyWhenGodChalice = value
+		saveSettings()  
+	end
+})
+
+spawn(function()
+	while wait() do
+		pcall(function()
+			if _G.NotifyWhenGodChalice then
+				local urleh = _G.WebhookEH_URL
+				local dataeh = {
+				["content"] = "<@&1063995657062469672>",
+				["embeds"] = {
+					{
+						["title"] = "SixMaHub Notify God's Chalice",
+						["description"] = "**Username**\n```"..game.Players.localPlayer.Name.."```\n**Place Id**\n```"..game.placeId.."```\n**Job Id**\n```lua\ngame.ReplicatedStorage['__ServerBrowser']:InvokerServer('teleport','"..game.JobId.."')```",
+						["type"] = "rich",
+						["color"] = tonumber(0x68cfa5),
+					}
+				}
+				}
+				local newdataeh = game:GetService("HttpService"):JSONEncode(dataeh)
+				
+				local headerseh = {
+				["content-type"] = "application/json"
+				}
+				request = http_request or request or HttpPost or syn.request
+				local eh = {Url = urleh, Body = newdataeh, Method = "POST", Headers = headerseh}
+								
+				if game.Players.LocalPlayer.Backpack:FindFirstChild("God's Chalice") or game.Players.LocalPlayer.Character:FindFirstChild("God's Chalice") then
+					request(eh)
+					wait(600)
+				end   
+			end
+		end)	
+	end
+end)
+
+EliteHunter:AddTextBox({
+	Name = "Webhook URL",
+	Flag = "WebhookEH_URL",
+	Value = _G.Settings.WebhookEH_URL,
+	Callback = function(value)
+		_G.WebhookEH_URL = value
+		_G.Settings.WebhookEH_URL = value
+		saveSettings()
 	end
 })
 
@@ -6094,6 +6480,18 @@ function AutoHaki()
 	if not game:GetService("Players").LocalPlayer.Character:FindFirstChild("HasBuso") then
 		game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Buso")
 	end
+end
+
+function BypassTP(Position)
+    if _G.BypassTP and (Position.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude > 1200 then
+		if not game.Players.LocalPlayer.Backpack:FindFirstChild("God's Chalice") then
+			if not game.Players.LocalPlayer.Character:FindFirstChild("God's Chalice") then
+				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Position
+				game.Players.LocalPlayer.Character.Humanoid:ChangeState(15)
+				game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetSpawnPoint")
+			end
+		end
+    end
 end
 
 spawn(function()
@@ -6112,6 +6510,8 @@ spawn(function()
 											v.HumanoidRootPart.CanCollide = false
 											v.Humanoid.WalkSpeed = 0
 											v.HumanoidRootPart.Size = Vector3.new(50,50,50)
+											CFrameElite = v.HumanoidRootPart.CFrame
+											BypassTP(CFrameElite)
 											topos(v.HumanoidRootPart.CFrame * CFrame.new(0,50,0))
 											game:GetService("VirtualUser"):CaptureController()
 											game:GetService("VirtualUser"):Button1Down(Vector2.new(1280,672))
@@ -6122,18 +6522,22 @@ spawn(function()
 							end
 						else
 							if game:GetService("ReplicatedStorage"):FindFirstChild("Diablo [Lv. 1750]") then
-								topos(game:GetService("ReplicatedStorage"):FindFirstChild("Diablo [Lv. 1750]").HumanoidRootPart.CFrame * CFrame.new(0,_G.Select_Distance,0))
+								topos(game:GetService("ReplicatedStorage"):FindFirstChild("Diablo [Lv. 1750]").HumanoidRootPart.CFrame * CFrame.new(0,50,0))
 							elseif game:GetService("ReplicatedStorage"):FindFirstChild("Deandre [Lv. 1750]") then
-								topos(game:GetService("ReplicatedStorage"):FindFirstChild("Deandre [Lv. 1750]").HumanoidRootPart.CFrame * CFrame.new(0,_G.Select_Distance,0))
+								topos(game:GetService("ReplicatedStorage"):FindFirstChild("Deandre [Lv. 1750]").HumanoidRootPart.CFrame * CFrame.new(0,50,0))
 							elseif game:GetService("ReplicatedStorage"):FindFirstChild("Urban [Lv. 1750]") then
-								topos(game:GetService("ReplicatedStorage"):FindFirstChild("Urban [Lv. 1750]").HumanoidRootPart.CFrame * CFrame.new(0,_G.Select_Distance,0))
+								topos(game:GetService("ReplicatedStorage"):FindFirstChild("Urban [Lv. 1750]").HumanoidRootPart.CFrame * CFrame.new(0,50,0))
 							end
 						end                    
 					end
 				else
 					if _G.Auto_Elite_Hunter_Hop and game:GetService("ReplicatedStorage").Remotes["CommF_"]:InvokeServer("EliteHunter") == "I don't have anything for you right now. Come back later." then
-						if game.Players.LocalPlayer.Backpack:FindFirstChild("God's Chalice") or game.Players.LocalPlayer.Character:FindFirstChild("God's Chalice") then
-							wait()
+						if _G.StopWhenGodChalice then
+							if game.Players.LocalPlayer.Backpack:FindFirstChild("God's Chalice") or game.Players.LocalPlayer.Character:FindFirstChild("God's Chalice") then
+								wait()
+							else
+								Teleport()
+							end
 						else
 							Teleport()
 						end
@@ -6380,7 +6784,7 @@ end
 spawn(function()
     pcall(function()
         game:GetService("RunService").Stepped:Connect(function()
-            if _G.Teleport_to_Mythic_Island or _G.Teleport_to_Gear or _G.Float or _G.MobAura or _G.Auto_Elite_Hunter then
+            if _G.Teleport_to_Mythic_Island or _G.Teleport_to_Gear or _G.Float or _G.MobAura or _G.Auto_Elite_Hunter or _G.TeleporttoIsland then
                 if not game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip") then
                     local Noclip = Instance.new("BodyVelocity")
                     Noclip.Name = "BodyClip"
@@ -6400,7 +6804,7 @@ end)
 spawn(function()
     pcall(function()
         game:GetService("RunService").Stepped:Connect(function()
-            if _G.Teleport_to_Mythic_Island or _G.Teleport_to_Gear or _G.Float or _G.MobAura or _G.Auto_Elite_Hunter then
+            if _G.Teleport_to_Mythic_Island or _G.Teleport_to_Gear or _G.Float or _G.MobAura or _G.Auto_Elite_Hunter or _G.TeleporttoIsland then
                 for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
                     if v:IsA("BasePart") then
                         v.CanCollide = false    
@@ -6575,6 +6979,17 @@ Misc:AddToggle{
 	Callback  = function(value)
 	_G.Auto_Use_Awakening = value
 	StopTween(_G.Auto_Use_Awakening)
+	end
+}
+
+Misc:AddToggle{
+	Name = "BypassTP",
+	Flag = "BypassTP",
+	Value = _G.Settings.BypassTP,
+	Callback  = function(value)
+	_G.BypassTP = value
+	_G.Settings.BypassTP = value
+	saveSettings()
 	end
 }
 
@@ -7029,6 +7444,8 @@ end)
                                     MobAura = v.HumanoidRootPart.CFrame
                                     MobAuraName = v.Name
                                     topos(v.HumanoidRootPart.CFrame * CFrame.new(0,50,0))
+									game:GetService("VirtualUser"):CaptureController()
+									game:GetService("VirtualUser"):Button1Down(Vector2.new(1280,672))
                                     sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", math.huge)
                                 until not _G.MobAura  or not v.Parent or v.Humanoid.Health <= 0
                             end)
@@ -7043,7 +7460,7 @@ end)
 	game:GetService("RunService").Heartbeat:Connect(function()
 		pcall(function()
 			for i,v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
-				if _G.MobAura and (v.Name == "Reborn Skeleton [Lv. 1975]" or v.Name == "Living Zombie [Lv. 2000]" or v.Name == "Demonic Soul [Lv. 2025]" or v.Name == "Posessed Mummy [Lv. 2050]") and (v.HumanoidRootPart.Position - PosMonBone.Position).magnitude <= 200 then
+				if _G.MobAura and (v.HumanoidRootPart.Position - MobAura.Position).magnitude <= 300 then
 				    if v.Name == MobAuraName then
     					v.HumanoidRootPart.CFrame = MobAura
     					v.HumanoidRootPart.CanCollide = false
@@ -7073,7 +7490,7 @@ end)
     
     spawn(function()
     game:GetService("RunService").Heartbeat:Connect(function()
-        if _G.MobAura or _G.Teleport_to_Mythic_Island or _G.Teleport_to_Gear or _G.Auto_Elite_Hunter then
+        if _G.MobAura or _G.Teleport_to_Mythic_Island or _G.Teleport_to_Gear or _G.Auto_Elite_Hunter or _G.TeleporttoIsland then
             if game:GetService("Players").LocalPlayer.Character:FindFirstChild("Humanoid") then
                 setfflag("HumanoidParallelRemoveNoPhysics", "False")
                 setfflag("HumanoidParallelRemoveNoPhysicsNoSimulate2", "False")
