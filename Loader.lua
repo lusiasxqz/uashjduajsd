@@ -6017,6 +6017,10 @@ _G.Settings = {
 	BypassTP = false;
 	NotifyWhenGodChalice = false;
 	WebhookEH_URL = "";
+	WebhookMI_URL = "";
+	NotifyWhenMythicIsland = false;
+	Auto_Farm_Observation_Haki = false;
+	Auto_Farm_Observation_Haki_Rejoin = false;
 }
 
 local foldername = "SixMa Hub"
@@ -6093,6 +6097,11 @@ local Moon = Automatic:CreateSection({
     Side = "Right" -- ตำแหน่ง Left/Right
 })
 
+local ObservationHaki = Automatic:CreateSection({
+    Name = "Observation Haki", -- ชื่อ
+    Side = "Left" -- ตำแหน่ง Left/Right
+})
+
 local Teleport = Island:CreateSection({
     Name = "Teleport", -- ชื่อ
     Side = "Left" -- ตำแหน่ง Left/Right
@@ -6116,6 +6125,137 @@ local Elite_Hunter_Status = EliteHunter:AddLabel({
 		"7/8",
 		"8/8 [FullMoon]",
 		}
+
+local ObservationLevel = ObservationHaki:AddLabel({
+	Name = "Observation Level : N/A",
+	Flag = "Observation_Level"
+})
+
+spawn(function()
+	while wait() do
+		pcall(function()
+			Value = math.floor(game.Players.LocalPlayer.VisionRadius.Value/6.6)
+			ObservationLevel:Set("Observation Level : "..Value)	
+		end)
+	end
+end)
+
+ObservationHaki:AddToggle({
+	Name = "Auto Farm Observation",
+	Flag = "Auto_Farm_Observation_Haki",
+	Value = _G.Settings.Auto_Farm_Observation_Haki,
+	Callback = function(value)
+		_G.Auto_Farm_Observation_Haki = value
+		_G.Settings.Auto_Farm_Observation_Haki = value
+		saveSettings()
+		StopTween(_G.Auto_Farm_Observation_Haki)
+	end
+})
+
+ObservationHaki:AddToggle({
+	Name = "Auto Farm Observation [Rejoin]",
+	Flag = "Auto_Farm_Observation_Haki_Rejoin",
+	Value = _G.Settings.Auto_Farm_Observation_Haki_Rejoin,
+	Callback = function(value)
+		_G.Auto_Farm_Observation_Haki_Rejoin = value
+		_G.Settings.Auto_Farm_Observation_Haki_Rejoin = value
+		saveSettings()
+	end
+})
+
+spawn(function()
+	while wait() do wait(Sec)
+		pcall(function()
+			if _G.Auto_Farm_Observation_Haki and not game.Players.LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel") then
+				game:GetService('VirtualUser'):CaptureController()
+				game:GetService('VirtualUser'):SetKeyDown('0x65')
+				wait(2)
+				game:GetService('VirtualUser'):SetKeyUp('0x65')
+			end
+		end)
+	end
+end)
+
+spawn(function()
+    while wait() do
+        pcall(function()
+            if _G.Auto_Farm_Observation_Haki then
+                repeat task.wait()
+                    if not game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel") then
+                        game:GetService('VirtualUser'):CaptureController()
+                        game:GetService('VirtualUser'):SetKeyDown('0x65')
+                        wait(2)
+                        game:GetService('VirtualUser'):SetKeyUp('0x65')
+                    end
+                until game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel") or not _G.Auto_Farm_Observation_Haki
+            end
+        end)
+    end
+end)
+
+spawn(function()
+    pcall(function()
+        while wait() do
+            if _G.Auto_Farm_Observation_Haki then
+                    if World2 then
+                        if game:GetService("Workspace").Enemies:FindFirstChild("Lava Pirate [Lv. 1200]") then
+                            if game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel") then
+                                repeat task.wait()
+                                    game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Enemies:FindFirstChild("Lava Pirate [Lv. 1200]").HumanoidRootPart.CFrame * CFrame.new(3,0,0)
+                                until _G.Auto_Farm_Observation_Haki == false or not game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel")
+                            else
+                                repeat task.wait()
+                                    game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Enemies:FindFirstChild("Lava Pirate [Lv. 1200]").HumanoidRootPart.CFrame * CFrame.new(0,50,0)+
+                                        wait(1)
+                                    if not game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel") and _G.Auto_Farm_Observation_Haki_Rejoin == true then
+                                        Rejoin()
+                                    end
+                                until _G.Auto_Farm_Observation_Haki == false or game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel")
+                            end
+                        else
+                            topos(CFrame.new(-5478.39209, 15.9775667, -5246.9126))
+                        end
+                    elseif World1 then
+                        if game:GetService("Workspace").Enemies:FindFirstChild("Galley Captain [Lv. 650]") then
+                            if game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel") then
+                                repeat task.wait()
+                                    game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Enemies:FindFirstChild("Galley Captain [Lv. 650]").HumanoidRootPart.CFrame * CFrame.new(3,0,0)
+                                until _G.Auto_Farm_Observation_Haki == false or not game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel")
+                            else
+                                repeat task.wait()
+                                    game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Enemies:FindFirstChild("Galley Captain [Lv. 650]").HumanoidRootPart.CFrame * CFrame.new(0,50,0)
+                                    wait(1)
+                                    if not game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel") and _G.Auto_Farm_Observation_Haki_Rejoin == true then
+                                        Rejoin()
+                                    end
+                                until _G.Auto_Farm_Observation_Haki == false or game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel")
+                            end
+                        else
+                            topos(CFrame.new(5533.29785, 88.1079102, 4852.3916))
+                        end
+                    elseif World3 then
+                        if game:GetService("Workspace").Enemies:FindFirstChild("Marine Commodore [Lv. 1700]") then
+                            if game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel") then
+                                repeat task.wait()
+                                    game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Enemies:FindFirstChild("Marine Commodore [Lv. 1700]").HumanoidRootPart.CFrame * CFrame.new(3,0,0)
+                                until _G.Auto_Farm_Observation_Haki == false or not game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel")
+                            else
+                                repeat task.wait()
+                                    game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Enemies:FindFirstChild("Marine Commodore [Lv. 1700]").HumanoidRootPart.CFrame * CFrame.new(0,50,0)
+                                    wait(1)
+                                    if not game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel") and _G.Auto_Farm_Observation_Haki_Rejoin == true then
+                                        Rejoin()
+                                    end
+                                until _G.Auto_Farm_Observation_Haki == false or game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel")
+                            end
+                        else
+                            topos(CFrame.new(2355.557373046875, 117.40848541259766, -6797.40673828125))
+                        end
+                    end
+				end
+        end
+    end)
+end)
 
 Moon:AddDropdown({
 	Name = "Moon Stage",
@@ -6159,9 +6299,10 @@ spawn(function()
 					while wait() do
 						pcall(function()
 							if game:GetService("Lighting").Sky.MoonTextureId == "http://www.roblox.com/asset/?id=".._G.MoonId then
-								wait(99999999999999999999999999)
+								_G.Auto_Find_Moon_Hop = false
+								wait(1)
 							else
-									Teleport()
+								Teleport()
 							end
 						end)
 					end
@@ -6438,7 +6579,7 @@ spawn(function()
 			if _G.NotifyWhenGodChalice then
 				local urleh = _G.WebhookEH_URL
 				local dataeh = {
-				["content"] = "<@&1063995657062469672>",
+				["content"] = "",
 				["embeds"] = {
 					{
 						["title"] = "SixMaHub Notify God's Chalice",
@@ -6483,7 +6624,7 @@ function AutoHaki()
 end
 
 function BypassTP(Position)
-    if _G.BypassTP and (Position.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude > 1200 then
+    if _G.BypassTP then
 		if not game.Players.LocalPlayer.Backpack:FindFirstChild("God's Chalice") then
 			if not game.Players.LocalPlayer.Character:FindFirstChild("God's Chalice") then
 				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Position
@@ -6510,8 +6651,6 @@ spawn(function()
 											v.HumanoidRootPart.CanCollide = false
 											v.Humanoid.WalkSpeed = 0
 											v.HumanoidRootPart.Size = Vector3.new(50,50,50)
-											CFrameElite = v.HumanoidRootPart.CFrame
-											BypassTP(CFrameElite)
 											topos(v.HumanoidRootPart.CFrame * CFrame.new(0,50,0))
 											game:GetService("VirtualUser"):CaptureController()
 											game:GetService("VirtualUser"):Button1Down(Vector2.new(1280,672))
@@ -6522,11 +6661,26 @@ spawn(function()
 							end
 						else
 							if game:GetService("ReplicatedStorage"):FindFirstChild("Diablo [Lv. 1750]") then
-								topos(game:GetService("ReplicatedStorage"):FindFirstChild("Diablo [Lv. 1750]").HumanoidRootPart.CFrame * CFrame.new(0,50,0))
+								if _G.BypassTP and (game:GetService("ReplicatedStorage"):FindFirstChild("Diablo [Lv. 1750]").HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude > 1200 then
+									BypassTP(game:GetService("ReplicatedStorage"):FindFirstChild("Diablo [Lv. 1750]").HumanoidRootPart.CFrame)
+									wait(2)
+								else
+									topos(game:GetService("ReplicatedStorage"):FindFirstChild("Diablo [Lv. 1750]").HumanoidRootPart.CFrame * CFrame.new(0,50,0))
+								end
 							elseif game:GetService("ReplicatedStorage"):FindFirstChild("Deandre [Lv. 1750]") then
-								topos(game:GetService("ReplicatedStorage"):FindFirstChild("Deandre [Lv. 1750]").HumanoidRootPart.CFrame * CFrame.new(0,50,0))
+								if _G.BypassTP and (game:GetService("ReplicatedStorage"):FindFirstChild("Deandre [Lv. 1750]").HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude > 1200 then
+									BypassTP(game:GetService("ReplicatedStorage"):FindFirstChild("Deandre [Lv. 1750]").HumanoidRootPart.CFrame)
+									wait(2)
+								else
+									topos(game:GetService("ReplicatedStorage"):FindFirstChild("Deandre [Lv. 1750]").HumanoidRootPart.CFrame * CFrame.new(0,50,0))
+								end
 							elseif game:GetService("ReplicatedStorage"):FindFirstChild("Urban [Lv. 1750]") then
-								topos(game:GetService("ReplicatedStorage"):FindFirstChild("Urban [Lv. 1750]").HumanoidRootPart.CFrame * CFrame.new(0,50,0))
+								if _G.BypassTP and (game:GetService("ReplicatedStorage"):FindFirstChild("Urban [Lv. 1750]").HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude > 1200 then
+									BypassTP(game:GetService("ReplicatedStorage"):FindFirstChild("Urban [Lv. 1750]").HumanoidRootPart.CFrame)
+									wait(2)
+								else
+									topos(game:GetService("ReplicatedStorage"):FindFirstChild("Urban [Lv. 1750]").HumanoidRootPart.CFrame * CFrame.new(0,50,0))
+								end
 							end
 						end                    
 					end
@@ -6534,6 +6688,7 @@ spawn(function()
 					if _G.Auto_Elite_Hunter_Hop and game:GetService("ReplicatedStorage").Remotes["CommF_"]:InvokeServer("EliteHunter") == "I don't have anything for you right now. Come back later." then
 						if _G.StopWhenGodChalice then
 							if game.Players.LocalPlayer.Backpack:FindFirstChild("God's Chalice") or game.Players.LocalPlayer.Character:FindFirstChild("God's Chalice") then
+								_G.Auto_Elite_Hunter_Hop = false
 								wait()
 							else
 								Teleport()
@@ -6654,6 +6809,9 @@ Server:AddButton({
 	end
 })
 
+function Rejoin()
+	ts:Teleport(game.PlaceId, p)
+end
 
 
 function Hop()
@@ -6760,7 +6918,7 @@ function topos(Pos)
     if game.Players.LocalPlayer.Character.Humanoid.Sit == true then game.Players.LocalPlayer.Character.Humanoid.Sit = false end
     pcall(function() tween = game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character.HumanoidRootPart,TweenInfo.new(Distance/350, Enum.EasingStyle.Linear),{CFrame = Pos}) end)
     tween:Play()
-    if Distance <= 250 then
+    if Distance <= 150 then
         tween:Cancel()
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Pos
     end
@@ -6784,7 +6942,7 @@ end
 spawn(function()
     pcall(function()
         game:GetService("RunService").Stepped:Connect(function()
-            if _G.Teleport_to_Mythic_Island or _G.Teleport_to_Gear or _G.Float or _G.MobAura or _G.Auto_Elite_Hunter or _G.TeleporttoIsland then
+            if _G.Teleport_to_Mythic_Island or _G.Teleport_to_Gear or _G.Float or _G.MobAura or _G.Auto_Elite_Hunter or _G.TeleporttoIsland or _G.Auto_Farm_Observation_Haki then
                 if not game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip") then
                     local Noclip = Instance.new("BodyVelocity")
                     Noclip.Name = "BodyClip"
@@ -6804,7 +6962,7 @@ end)
 spawn(function()
     pcall(function()
         game:GetService("RunService").Stepped:Connect(function()
-            if _G.Teleport_to_Mythic_Island or _G.Teleport_to_Gear or _G.Float or _G.MobAura or _G.Auto_Elite_Hunter or _G.TeleporttoIsland then
+            if _G.Teleport_to_Mythic_Island or _G.Teleport_to_Gear or _G.Float or _G.MobAura or _G.Auto_Elite_Hunter or _G.TeleporttoIsland or _G.Auto_Farm_Observation_Haki then
                 for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
                     if v:IsA("BasePart") then
                         v.CanCollide = false    
@@ -6846,6 +7004,62 @@ MythicIsland:AddToggle{
 	StopTween(_G.Teleport_to_Gear)
 	end
 }
+
+MythicIsland:AddToggle({
+	Name = "Notify When Mythic Island",
+	Flag = "NotifyWhenMythicIsland",
+	Value = _G.Settings.NotifyWhenMythicIsland,
+	Callback = function(value)
+		_G.NotifyWhenMythicIsland = value  
+		_G.Settings.NotifyWhenMythicIsland = value
+		saveSettings()  
+	end
+})
+
+spawn(function()
+	while wait() do
+		pcall(function()
+			if _G.NotifyWhenMythicIsland then
+				local urlmi = _G.WebhookMI_URL
+				local datami = {
+				["content"] = "",
+				["embeds"] = {
+					{
+						["title"] = "SixMaHub Notify Mythic Island",
+						["description"] = "**Username**\n```"..game.Players.localPlayer.Name.."```\n**Place Id**\n```"..game.placeId.."```\n**Job Id**\n```lua\ngame.ReplicatedStorage['__ServerBrowser']:InvokerServer('teleport','"..game.JobId.."')```",
+						["type"] = "rich",
+						["color"] = tonumber(0xf1412f),
+					}
+				}
+				}
+				local newdatami = game:GetService("HttpService"):JSONEncode(dataeh)
+				
+				local headersmi = {
+				["content-type"] = "application/json"
+				}
+				request = http_request or request or HttpPost or syn.request
+				local mi = {Url = urlmi, Body = newdatami, Method = "POST", Headers = headersmi}
+								
+				if game:GetService("Workspace").Map:FindFirstChild("MysticIsland") then
+					request(mi)
+					wait(900)
+				end   
+			end
+		end)	
+	end
+end)
+
+
+MythicIsland:AddTextBox({
+	Name = "Webhook URL",
+	Flag = "WebhookMI_URL",
+	Value = _G.Settings.WebhookMI_URL,
+	Callback = function(value)
+		_G.WebhookMI_URL = value
+		_G.Settings.WebhookMI_URL = value
+		saveSettings()
+	end
+})
 
 
 
@@ -7084,10 +7298,10 @@ function AttackNoCD()
 end
 require(game.ReplicatedStorage.Util.CameraShaker):Stop()
 spawn(function()
-    while wait(.1) do
+    while wait(.05) do
         pcall(function()
             if _G.MobAura or _G.Auto_Elite_Hunter then
-                repeat wait(.05)
+                repeat wait(.01)
                     AttackNoCD()
                 until _G.MobAura == false or not _G.Auto_Elite_Hunter
             end
@@ -7460,15 +7674,17 @@ end)
 	game:GetService("RunService").Heartbeat:Connect(function()
 		pcall(function()
 			for i,v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
-				if _G.MobAura and (v.HumanoidRootPart.Position - MobAura.Position).magnitude <= 300 then
-				    if v.Name == MobAuraName then
-    					v.HumanoidRootPart.CFrame = MobAura
-    					v.HumanoidRootPart.CanCollide = false
-    					v.HumanoidRootPart.Size = Vector3.new(50,50,50)
-    					if v.Humanoid:FindFirstChild("Animator") then
-    						v.Humanoid.Animator:Destroy()
-    					end
-    					sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius",  math.huge)
+				if not string.find("Boss",v.Name) then
+					if _G.MobAura and (v.HumanoidRootPart.Position - MobAura.Position).magnitude <= 300 then
+						if v.Name == MobAuraName then
+							v.HumanoidRootPart.CFrame = MobAura
+							v.HumanoidRootPart.CanCollide = false
+							v.HumanoidRootPart.Size = Vector3.new(50,50,50)
+							if v.Humanoid:FindFirstChild("Animator") then
+								v.Humanoid.Animator:Destroy()
+							end
+							sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius",  math.huge)
+						end
 					end
 				end
 			end
@@ -7490,7 +7706,7 @@ end)
     
     spawn(function()
     game:GetService("RunService").Heartbeat:Connect(function()
-        if _G.MobAura or _G.Teleport_to_Mythic_Island or _G.Teleport_to_Gear or _G.Auto_Elite_Hunter or _G.TeleporttoIsland then
+        if _G.MobAura or _G.Teleport_to_Mythic_Island or _G.Teleport_to_Gear or _G.Auto_Elite_Hunter or _G.TeleporttoIsland or _G.Auto_Farm_Observation_Haki then
             if game:GetService("Players").LocalPlayer.Character:FindFirstChild("Humanoid") then
                 setfflag("HumanoidParallelRemoveNoPhysics", "False")
                 setfflag("HumanoidParallelRemoveNoPhysicsNoSimulate2", "False")
