@@ -6295,18 +6295,12 @@ spawn(function()
 	while wait() do
 		pcall(function()
 			if _G.Auto_Find_Moon_Hop then
-				spawn(function()
-					while wait() do
-						pcall(function()
-							if game:GetService("Lighting").Sky.MoonTextureId == "http://www.roblox.com/asset/?id=".._G.MoonId then
-								_G.Auto_Find_Moon_Hop = false
-								wait(999999999999)
-							else
-								Teleport()
-							end
-						end)
-					end
-				end)
+				if game:GetService("Lighting").Sky.MoonTextureId == "http://www.roblox.com/asset/?id=".._G.MoonId then
+					_G.Auto_Find_Moon_Hop = false
+					wait(999999999999)
+				else
+					Teleport()
+				end
 			end
 		end)
 	end
