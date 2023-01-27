@@ -6134,7 +6134,7 @@ local ObservationLevel = ObservationHaki:AddLabel({
 spawn(function()
 	while wait() do
 		pcall(function()
-			Value = math.floor(game.Players.LocalPlayer.VisionRadius.Value/6.6)
+			Value = math.floor(game.Players.LocalPlayer.VisionRadius.Value)
 			ObservationLevel:Set("Observation Level : "..Value)	
 		end)
 	end
@@ -6300,7 +6300,7 @@ spawn(function()
 						pcall(function()
 							if game:GetService("Lighting").Sky.MoonTextureId == "http://www.roblox.com/asset/?id=".._G.MoonId then
 								_G.Auto_Find_Moon_Hop = false
-								wait(1)
+								wait(999999999999)
 							else
 								Teleport()
 							end
