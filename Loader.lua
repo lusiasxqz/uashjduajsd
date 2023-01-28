@@ -35,8 +35,8 @@ end)
 
 wait(2)
 
-if game.CoreGui:FindFirstChild("PepsiUi") then
-    game.CoreGui:FindFirstChild("PepsiUi"):Destroy()
+if game.CoreGui:FindFirstChild("SixMaHub") then
+    game.CoreGui:FindFirstChild("SixMaHub"):Destroy()
 end
 
 local library = {
@@ -757,7 +757,7 @@ function library:CreateWindow(options, ...)
 	library.globals["__Window" .. options.Name] = {
 		submenuOpen = submenuOpen
 	}
-	FunctionLibrary.Name = "PepsiUi"
+	FunctionLibrary.Name = "SixMaHub"
 	FunctionLibrary.Parent = library.gui_parent
 	FunctionLibrary.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	FunctionLibrary.DisplayOrder = 10
@@ -6201,11 +6201,11 @@ spawn(function()
                         if game:GetService("Workspace").Enemies:FindFirstChild("Lava Pirate [Lv. 1200]") then
                             if game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel") then
                                 repeat task.wait()
-                                    game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Enemies:FindFirstChild("Lava Pirate [Lv. 1200]").HumanoidRootPart.CFrame * CFrame.new(3,0,0)
+                                    topos(game:GetService("Workspace").Enemies:FindFirstChild("Lava Pirate [Lv. 1200]").HumanoidRootPart.CFrame * CFrame.new(3,0,0))
                                 until _G.Auto_Farm_Observation_Haki == false or not game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel")
                             else
                                 repeat task.wait()
-                                    game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Enemies:FindFirstChild("Lava Pirate [Lv. 1200]").HumanoidRootPart.CFrame * CFrame.new(0,50,0)+
+                                    topos(game:GetService("Workspace").Enemies:FindFirstChild("Lava Pirate [Lv. 1200]").HumanoidRootPart.CFrame * CFrame.new(0,50,0))
                                         wait(1)
                                     if not game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel") and _G.Auto_Farm_Observation_Haki_Rejoin == true then
                                         Rejoin()
@@ -6219,11 +6219,11 @@ spawn(function()
                         if game:GetService("Workspace").Enemies:FindFirstChild("Galley Captain [Lv. 650]") then
                             if game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel") then
                                 repeat task.wait()
-                                    game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Enemies:FindFirstChild("Galley Captain [Lv. 650]").HumanoidRootPart.CFrame * CFrame.new(3,0,0)
+                                    topos(game:GetService("Workspace").Enemies:FindFirstChild("Galley Captain [Lv. 650]").HumanoidRootPart.CFrame * CFrame.new(3,0,0))
                                 until _G.Auto_Farm_Observation_Haki == false or not game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel")
                             else
                                 repeat task.wait()
-                                    game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Enemies:FindFirstChild("Galley Captain [Lv. 650]").HumanoidRootPart.CFrame * CFrame.new(0,50,0)
+                                    topos(game:GetService("Workspace").Enemies:FindFirstChild("Galley Captain [Lv. 650]").HumanoidRootPart.CFrame * CFrame.new(0,50,0))
                                     wait(1)
                                     if not game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel") and _G.Auto_Farm_Observation_Haki_Rejoin == true then
                                         Rejoin()
@@ -6236,12 +6236,14 @@ spawn(function()
                     elseif World3 then
                         if game:GetService("Workspace").Enemies:FindFirstChild("Marine Commodore [Lv. 1700]") then
                             if game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel") then
-                                repeat task.wait()
-                                    game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Enemies:FindFirstChild("Marine Commodore [Lv. 1700]").HumanoidRootPart.CFrame * CFrame.new(3,0,0)
+								print("1")
+                                repeat wait()
+                                    topos(game:GetService("Workspace").Enemies["Marine Commodore [Lv. 1700]"].HumanoidRootPart.CFrame * CFrame.new(3,0,0))
+									print("2")
                                 until _G.Auto_Farm_Observation_Haki == false or not game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel")
                             else
                                 repeat task.wait()
-                                    game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("Workspace").Enemies:FindFirstChild("Marine Commodore [Lv. 1700]").HumanoidRootPart.CFrame * CFrame.new(0,50,0)
+                                    topos(game:GetService("Workspace").Enemies["Marine Commodore [Lv. 1700]"].HumanoidRootPart.CFrame * CFrame.new(0,50,0))
                                     wait(1)
                                     if not game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui:FindFirstChild("ImageLabel") and _G.Auto_Farm_Observation_Haki_Rejoin == true then
                                         Rejoin()
@@ -6297,7 +6299,6 @@ spawn(function()
 			if _G.Auto_Find_Moon_Hop then
 				if game:GetService("Lighting").Sky.MoonTextureId == "http://www.roblox.com/asset/?id=".._G.MoonId then
 					_G.Auto_Find_Moon_Hop = false
-					wait(999999999999)
 				else
 					Teleport()
 				end
@@ -6792,19 +6793,15 @@ Server:AddButton({
 	end
 })
 
-local ts = game:GetService("TeleportService")
-
-local p = game:GetService("Players").LocalPlayer
-
 Server:AddButton({
 	Name = "Rejoin",
 	Callback = function()
-		ts:Teleport(game.PlaceId, p)
+		game:GetService'TeleportService':TeleportToPlaceInstance(game.PlaceId,game.JobId,game:GetService'Players'.LocalPlayer)
 	end
 })
 
 function Rejoin()
-	ts:Teleport(game.PlaceId, p)
+	game:GetService'TeleportService':TeleportToPlaceInstance(game.PlaceId,game.JobId,game:GetService'Players'.LocalPlayer)
 end
 
 
@@ -7010,13 +7007,24 @@ MythicIsland:AddToggle({
 	end
 })
 
+MythicIsland:AddTextBox({
+	Name = "Webhook URL",
+	Flag = "WebhookMI_URL",
+	Value = _G.Settings.WebhookMI_URL,
+	Callback = function(value)
+		_G.WebhookMI_URL = value
+		_G.Settings.WebhookMI_URL = value
+		saveSettings()
+	end
+})
+
 spawn(function()
 	while wait() do
 		pcall(function()
 			if _G.NotifyWhenMythicIsland then
 				local urlmi = _G.WebhookMI_URL
 				local datami = {
-				["content"] = "",
+				["content"] = "@here",
 				["embeds"] = {
 					{
 						["title"] = "SixMaHub Notify Mythic Island",
@@ -7026,7 +7034,7 @@ spawn(function()
 					}
 				}
 				}
-				local newdatami = game:GetService("HttpService"):JSONEncode(dataeh)
+				local newdatami = game:GetService("HttpService"):JSONEncode(datami)
 				
 				local headersmi = {
 				["content-type"] = "application/json"
@@ -7044,16 +7052,7 @@ spawn(function()
 end)
 
 
-MythicIsland:AddTextBox({
-	Name = "Webhook URL",
-	Flag = "WebhookMI_URL",
-	Value = _G.Settings.WebhookMI_URL,
-	Callback = function(value)
-		_G.WebhookMI_URL = value
-		_G.Settings.WebhookMI_URL = value
-		saveSettings()
-	end
-})
+
 
 
 
